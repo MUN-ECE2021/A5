@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cassert>      // for using assert
 #include <algorithm>
 #include "SocialNetwork.h"
 #include "User.h"
@@ -10,13 +11,28 @@ int main()
     SocialNetwork Term4;
 
     //test addUser()
-    User::ID Glyn_George    = Term4.addUser("Glyn H. George");
-    User::ID Liang          = Term4.addUser("Xiaodong Liang");
-    User::ID Andrew_Vardy   = Term4.addUser("Andrew Vardy");
-    User::ID Quaicoe        = Term4.addUser("John E. Quaicoe");
-    User::ID Mashrura       = Term4.addUser("Mashrura Musharraf");
-    User::ID Anderson       = Term4.addUser("Jonathan R. Anderson");
-    User::ID Daniela        = Term4.addUser("Daniela Silvesan");
+    User::ID Glyn_George   = Term4.addUser("Glyn H. George");
+    User::ID Liang         = Term4.addUser("Xiaodong Liang");
+    User::ID Andrew_Vardy  = Term4.addUser("Andrew Vardy");
+    User::ID Quaicoe       = Term4.addUser("John E. Quaicoe");
+    User::ID Mashrura      = Term4.addUser("Mashrura Musharraf");
+    User::ID Anderson      = Term4.addUser("Jonathan R. Anderson");
+    User::ID Daniela       = Term4.addUser("Daniela Silvesan");
+
+
+    /*                                         |---------------------------|
+     *                                         |                           |
+     *    Glyn_George           /-----------Mashrura---------\             |
+     *        |       \        /               |              \            |
+     *        |        \------/----------------|-------------- Daniela     |
+     *        |              /                 |                 |         |
+     *        |    /----Liang       /--------- + ----------------|         |
+     *        |   /                /           |                           |
+     *        |  //---------------/            |                           |
+     *     Quaicoe ------------------------Andrew_Vardy ------- Anderson   |
+     *        |                                                            |
+     *        |------------------------------------------------------------|
+     */
 
 
     //test addFriendship
@@ -129,20 +145,315 @@ int main()
     //!End Basic Tests
 
 
-    //!Start Advanced Tests
+    //!Start Medium Tests
     SocialNetwork Term3;
 
-    Term3.addUser("Glyn H. George");
-    Term3.addUser("Darlene Spracklin-Reid");
-    Term3.addUser("Susan Caines");
-    Term3.addUser("Ramachandran Venkatesan");
-    Term3.addUser("John E. Quaicoe");
-    Term3.addUser("Andrew House");
-    Term3.addUser("Mykhaylo Evstigneev");
+    Glyn_George        = Term3.addUser("Glyn H. George");
+    Quaicoe            = Term3.addUser("John E. Quaicoe");
+    User::ID Darlene   = Term3.addUser("Darlene Spracklin-Reid");
+    User::ID Susan     = Term3.addUser("Susan Caines");
+    User::ID Venky     = Term3.addUser("Ramachandran Venkatesan");
+    User::ID House     = Term3.addUser("Andrew House");
+    User::ID Misha     = Term3.addUser("Mykhaylo Evstigneev");
+
+    /*
+     *   Venky                                   House
+     *        \                                 /
+     *         Darlene - Quaico      Glyn_George
+     *        /
+     *   Susan                                        Misha
+     *
+     */
+    Term3.addFriendship(Venky, Darlene);
+    Term3.addFriendship(Susan, Darlene);
+    Term3.addFriendship(Quaicoe, Darlene);
+    Term3.addFriendship(House, Glyn_George);
+
+    assert(Term3.getUser(Venky).distance(Term3.getUser(Darlene))     == 1);
+    assert(Term3.getUser(Venky).distance(Term3.getUser(Quaicoe))     == 2);
+    assert(Term3.getUser(Venky).distance(Term3.getUser(Susan))       == 2);
+    assert(Term3.getUser(Glyn_George).distance(Term3.getUser(House)) == 1);
+    assert(Term3.getUser(Venky).distance(Term3.getUser(House))       == SIZE_MAX);
+    assert(Term3.getUser(Misha).distance(Term3.getUser(Glyn_George)) == SIZE_MAX);
 
 
-    //!End Advanced tests
+    /*
+     *   Venky                                 House
+     *        \                               /
+     *         Darlene - Quaicoe - Glyn_George
+     *        /                               \
+     *   Susan                                  Misha
+     *
+     */
+    Term3.addFriendship(Quaicoe, Glyn_George);
+    Term3.addFriendship(Misha, Glyn_George);
+
+    assert(Term3.getUser(Venky).distance(Term3.getUser(House))         == 4);
+    assert(Term3.getUser(Venky).distance(Term3.getUser(Misha))         == 4);
+    assert(Term3.getUser(Misha).distance(Term3.getUser(Venky))         == 4);
+    assert(Term3.getUser(Venky).distance(Term3.getUser(Glyn_George))   == 3);
+    assert(Term3.getUser(Quaicoe).distance(Term3.getUser(House))       == 2);
+    assert(Term3.getUser(Quaicoe).distance(Term3.getUser(Venky))       == 2);
+    assert(Term3.getUser(Quaicoe).distance(Term3.getUser(Misha))       == 2);
+    assert(Term3.getUser(Quaicoe).distance(Term3.getUser(Susan))       == 2);
+    assert(Term3.getUser(Quaicoe).distance(Term3.getUser(Glyn_George)) == 1);
+    assert(Term3.getUser(Quaicoe).distance(Term3.getUser(Glyn_George)) == 1);
+    //!End Medium Tests
+
+
+    //!Start Hard Tests
+    SocialNetwork ECE;
+
+    Glyn_George            = ECE.addUser("Glyn H. George");  //Yes, Glyn George is in fact a part of the ECE Faculty
+    Liang                  = ECE.addUser("Xiaodong Liang");
+    Andrew_Vardy           = ECE.addUser("Andrew Vardy");
+    Quaicoe                = ECE.addUser("John E. Quaicoe");
+    Mashrura               = ECE.addUser("Mashrura Musharraf");
+    Anderson               = ECE.addUser("Jonathan R. Anderson");
+    Venky                  = ECE.addUser("Ramachandran Venkatesan");
+    House                  = ECE.addUser("Andrew House");
+    User::ID DPetes        = ECE.addUser("Dennis Peters");
+    User::ID Shehata       = ECE.addUser("Mohamed Shehata");
+    User::ID Lori_Hogan    = ECE.addUser("Lori Hogan");
+    User::ID Howard_Heys   = ECE.addUser("Howard Heys");
+    User::ID Brian_Kidney  = ECE.addUser("Brian Kidney");
+    User::ID Brian_Pretty  = ECE.addUser("Brian Pretty");
+    User::ID Greg_OLeary   = ECE.addUser("Greg O'Leary");
+
+    ECE.addFriendship(House,        Andrew_Vardy);
+    ECE.addFriendship(House,        Andrew_Vardy);
+    ECE.addFriendship(House,        Andrew_Vardy);
+    ECE.addFriendship(House,        Andrew_Vardy);
+    ECE.addFriendship(House,        Andrew_Vardy);
+    ECE.addFriendship(House,        Andrew_Vardy);
+    ECE.addFriendship(House,        Andrew_Vardy);
+    ECE.addFriendship(House,        Andrew_Vardy);
+    ECE.addFriendship(Andrew_Vardy, House);
+    ECE.addFriendship(Andrew_Vardy, House);
+    ECE.addFriendship(Andrew_Vardy, House);
+    ECE.addFriendship(Andrew_Vardy, House);
+    ECE.addFriendship(Andrew_Vardy, House);
+    ECE.addFriendship(Andrew_Vardy, House);
+    ECE.addFriendship(Andrew_Vardy, House);
+    ECE.addFriendship(Andrew_Vardy, House);
+
+    ECE.addFriendship(Shehata,      Andrew_Vardy);
+    ECE.addFriendship(Andrew_Vardy, Anderson);
+    ECE.addFriendship(Brian_Pretty, Lori_Hogan);
+    ECE.addFriendship(Brian_Kidney, Lori_Hogan);
+    ECE.addFriendship(Lori_Hogan,   Anderson);
+    ECE.addFriendship(Anderson,     DPetes);
+    ECE.addFriendship(DPetes,       Quaicoe);
+    ECE.addFriendship(Glyn_George,  Quaicoe);
+    ECE.addFriendship(Liang,        Glyn_George);
+    ECE.addFriendship(Howard_Heys,  Glyn_George);
+    ECE.addFriendship(Mashrura,     Venky);
+    ECE.addFriendship(Greg_OLeary,  Venky);
+    ECE.addFriendship(Venky,        Quaicoe);
+
+    /*
+     *
+     *       House                                                           Liang
+     *            \                                                         /
+     *             Vardy                                         Glyn_George
+     *            /      \                                      /           \
+     *     Shehata        \                                    /             Howard_Heys
+     *                     \                                  /
+     *                      Anderson --- D Peters --- Quaicoe
+     *                     /                                  \
+     *  Brian_Pretty      /                                    \       Mashrura
+     *              \    /                                      \     /
+     *               Lori                                        Venky
+     *              /                                                 \
+     *  Brian_Kidney                                                   Greg O'Leary
+     */
+
+    //Distance()
+    assert(ECE.getUser(House).distance(ECE.getUser(Andrew_Vardy)) == 1);
+    assert(ECE.getUser(House).distance(ECE.getUser(Anderson))     == 2);
+    assert(ECE.getUser(House).distance(ECE.getUser(DPetes))       == 3);
+    assert(ECE.getUser(House).distance(ECE.getUser(Lori_Hogan))   == 3);
+    assert(ECE.getUser(House).distance(ECE.getUser(Quaicoe))      == 4);
+    assert(ECE.getUser(House).distance(ECE.getUser(Brian_Kidney)) == 4);
+    assert(ECE.getUser(House).distance(ECE.getUser(Brian_Pretty)) == 4);
+    assert(ECE.getUser(House).distance(ECE.getUser(Glyn_George))  == 5);
+    assert(ECE.getUser(House).distance(ECE.getUser(Venky))        == 5);
+    assert(ECE.getUser(House).distance(ECE.getUser(Liang))        == 6);
+    assert(ECE.getUser(House).distance(ECE.getUser(Howard_Heys))  == 6);
+    assert(ECE.getUser(House).distance(ECE.getUser(Greg_OLeary))  == 6);
+    assert(ECE.getUser(House).distance(ECE.getUser(Mashrura))     == 6);
+
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Anderson))     == 1);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Quaicoe))      == 1);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Glyn_George))  == 2);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Andrew_Vardy)) == 2);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Lori_Hogan))   == 2);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Venky))        == 2);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(House))        == 3);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Shehata))      == 3);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Brian_Kidney)) == 3);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Brian_Pretty)) == 3);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Greg_OLeary))  == 3);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Mashrura))     == 3);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Liang))        == 3);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Howard_Heys))  == 3);
+
+    //SocialNetwork Iterator()
+    j = 1;
+    std::vector<User::ID> ECESocialNetwork1;
+    std::vector<User::ID> ECESocialNetwork2;
+    ECESocialNetwork1.push_back(House);
+    ECESocialNetwork1.push_back(Andrew_Vardy);
+    ECESocialNetwork1.push_back(Anderson);
+    ECESocialNetwork1.push_back(DPetes);
+    ECESocialNetwork1.push_back(Lori_Hogan);
+    ECESocialNetwork1.push_back(Quaicoe);
+    ECESocialNetwork1.push_back(Brian_Kidney);
+    ECESocialNetwork1.push_back(Brian_Pretty);
+    ECESocialNetwork1.push_back(Glyn_George);
+    ECESocialNetwork1.push_back(Venky);
+    ECESocialNetwork1.push_back(Liang);
+    ECESocialNetwork1.push_back(Howard_Heys);
+    ECESocialNetwork1.push_back(Greg_OLeary);
+    ECESocialNetwork1.push_back(Mashrura);
+    for(auto i = ECE.begin(); i != ECE.end(); i++)
+    {
+        if(j < 15)
+        {
+            ECESocialNetwork2.push_back((*i).id());
+            j++;
+        }
+    }
+    std::sort(ECESocialNetwork1.begin(), ECESocialNetwork1.end());
+    std::sort(ECESocialNetwork2.begin(), ECESocialNetwork2.end());
+    assert(ECESocialNetwork1 == ECESocialNetwork2);
+
+    //test find()
+    i = ECE.find("Brian");
+    assert((*i).id() == ECE.getUser(Brian_Kidney).id() or (*i).id() == ECE.getUser(Brian_Pretty).id());
+    i++;
+    assert((*i).id() == ECE.getUser(Brian_Kidney).id() or (*i).id() == ECE.getUser(Brian_Pretty).id());
+    i++;
+    assert(i == ECE.end());
+
+    i = ECE.find("Andrew");
+    assert((*i).id() == ECE.getUser(Andrew_Vardy).id() or (*i).id() == ECE.getUser(House).id());
+    i++;
+    assert((*i).id() == ECE.getUser(Andrew_Vardy).id() or (*i).id() == ECE.getUser(House).id());
+    i++;
+    assert(i == ECE.end());
+
+
+    //User Iterator()
+    j = 1;
+    std::vector<User::ID> DPetesFriends1;
+    std::vector<User::ID> DPetesFriends2;
+    DPetesFriends1.push_back(Anderson);
+    DPetesFriends1.push_back(Quaicoe);
+    for(auto i = ECE.getUser(DPetes).begin(); i != ECE.getUser(DPetes).end(); i++)
+    {
+        if(j < 3)
+        {
+            DPetesFriends2.push_back((*i).id());
+            j++;
+        }
+    }
+    std::sort(DPetesFriends1.begin(), DPetesFriends1.end());
+    std::sort(DPetesFriends2.begin(), DPetesFriends2.end());
+    assert(DPetesFriends1 == DPetesFriends2);
+
+    j = 1;
+    DPetesFriends1.clear();
+    DPetesFriends2.clear();
+    DPetesFriends1.push_back(Anderson);
+    DPetesFriends1.push_back(Quaicoe);
+    DPetesFriends1.push_back(Andrew_Vardy);
+    DPetesFriends1.push_back(Lori_Hogan);
+    DPetesFriends1.push_back(Glyn_George);
+    DPetesFriends1.push_back(Venky);
+    for(auto i = ECE.getUser(DPetes).friendsOfFriends(); i != ECE.getUser(DPetes).end(); i++)
+    {
+        if(j < 7)
+        {
+            DPetesFriends2.push_back((*i).id());
+            j++;
+        }
+    }
+    std::sort(DPetesFriends1.begin(), DPetesFriends1.end());
+    std::sort(DPetesFriends2.begin(), DPetesFriends2.end());
+    assert(DPetesFriends1 == DPetesFriends2);
+
+    //Test adding friends twice and adding yourself
+    ECE.addFriendship(DPetes, House);
+    ECE.addFriendship(DPetes, Shehata);
+    ECE.addFriendship(DPetes, Andrew_Vardy);
+    ECE.addFriendship(DPetes, Brian_Kidney);
+    ECE.addFriendship(DPetes, Brian_Pretty);
+    ECE.addFriendship(DPetes, Lori_Hogan);
+    ECE.addFriendship(DPetes, Anderson);
+    ECE.addFriendship(DPetes, DPetes);
+    ECE.addFriendship(DPetes, Quaicoe);
+    ECE.addFriendship(DPetes, Glyn_George);
+    ECE.addFriendship(DPetes, Liang);
+    ECE.addFriendship(DPetes, Howard_Heys);
+    ECE.addFriendship(DPetes, Venky);
+    ECE.addFriendship(DPetes, Mashrura);
+    ECE.addFriendship(DPetes, Greg_OLeary);
+    assert(ECE.getUser(DPetes).degree() == 14);
+
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Anderson))     == 1);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Quaicoe))      == 1);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Glyn_George))  == 1);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Andrew_Vardy)) == 1);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Lori_Hogan))   == 1);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Venky))        == 1);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(House))        == 1);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Shehata))      == 1);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Brian_Kidney)) == 1);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Brian_Pretty)) == 1);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Greg_OLeary))  == 1);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Mashrura))     == 1);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Liang))        == 1);
+    assert(ECE.getUser(DPetes).distance(ECE.getUser(Howard_Heys))  == 1);
+    //!End Hard Tests
+
+    //!Start Advanced Tests
+    //Warning this test may take a while to run depeneding on how you've setup your program
+    SocialNetwork Splatoon;
+    std::vector<User::ID> kids1;
+    std::vector<User::ID> squids1;
+    for(int i = 0; i != 5000; i++)
+    {
+        std::string kid = "kid";
+        kid = kid + std::to_string(i);
+        kids1.push_back(Splatoon.addUser(kid));
+
+        std::string squid = "squid";
+        squid = squid + std::to_string(i);
+        squids1.push_back(Splatoon.addUser(squid));
+    }
+
+    auto squidItr = Splatoon.find("squid");
+    auto kidItr = Splatoon.find("kid");
+    std::vector<User::ID> kids2;
+    std::vector<User::ID> squids2;
+
+    for(auto i = kidItr; i != Splatoon.end(); kidItr++, squidItr++, i++)
+    {
+        kids2.push_back((*kidItr).id());
+        squids2.push_back((*squidItr).id());
+    }
+    std::sort(kids1.begin(), kids1.end());
+    std::sort(kids2.begin(), kids2.end());
+
+    std::sort(squids1.begin(), squids1.end());
+    std::sort(squids2.begin(), squids2.end());
+
+    assert(kids1 == kids2);
+    assert(squids1 == squids2);
+    //!End Advanced Tests
 
     std::cout << "Congrats, you did it." << std::endl;
+
     return 0;
 }
