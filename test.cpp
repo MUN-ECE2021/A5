@@ -605,6 +605,7 @@ TEST(NASH_MAIN)
 		ECESocialNetwork1.push_back(DPetes);
 		ECESocialNetwork1.push_back(Lori_Hogan);
 		ECESocialNetwork1.push_back(Quaicoe);
+		ECESocialNetwork1.push_back(Shehata);
 		ECESocialNetwork1.push_back(Brian_Kidney);
 		ECESocialNetwork1.push_back(Brian_Pretty);
 		ECESocialNetwork1.push_back(Glyn_George);
@@ -615,7 +616,7 @@ TEST(NASH_MAIN)
 		ECESocialNetwork1.push_back(Mashrura);
 		for (auto i = ECE.begin(); i != ECE.end(); i++)
 		{
-			if (j < 15)
+			if (j < 16)
 			{
 				ECESocialNetwork2.push_back((*i).id());
 				j++;
