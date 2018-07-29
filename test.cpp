@@ -31,6 +31,8 @@ TEST(THE_IRON_THRONE, SPOILERS_AHEAD) {
 	GoT.addUser("Jamie Lannister"); // 6
 	GoT.addUser("Tyrian Lannister"); // 7
 
+	GoT.getUser(20);
+
 	cout << GoT.getUser(0).name_ << " = Ned Stark (ans)\n";
 	cout << GoT.getUser(5).name_ << " = Cerci Lannister (ans)\n\n";
 	ASSERT_EQ(GoT.getUser(0).name_, "Ned Stark");
@@ -153,7 +155,7 @@ TEST(RANDOM_1K_TESTS, FILL_WITH_VALUES)
 
 
 
-TEST(RANDOM_1K_TESTS, ITERATE_THROUGH_NETWORK)
+TEST(RANDOM_50K_TESTS, ITERATE_THROUGH_NETWORK)
 {
 	SocialNetwork itTest;
 	int val;
@@ -171,7 +173,33 @@ TEST(RANDOM_1K_TESTS, ITERATE_THROUGH_NETWORK)
 	ASSERT_EQ(val, 50000);
 }
 
-TEST(RANDOM_1K_TEST, ITERATE_THROUGH_NETWORK)
+TEST(RANDOM_50K_TESTS, NON_SEQUENTIAL_DISTANCE)
+{
+	SocialNetwork itTest;
+	int val;
+	int testSize = 50000;
+	for (int i = 0; i < testSize; i++) {
+		val = rand() /*% 1000*/;
+		itTest.addUser(to_string(val));
+	}
+	ASSERT_EQ(itTest.userCount_, 50000);
+
+	for (int i = 0; i < val; i += 1) {
+		for (int j = 0; j < 40; j++) {
+			if (i < val - 1) {
+				itTest.addFriendship(i, rand() % val);
+			}
+		}
+	}
+
+	itTest.getUser(12).distance(itTest.getUser(48234));
+	itTest.getUser(48234).distance(itTest.getUser(12));
+	itTest.getUser(25678).distance(itTest.getUser(33992));
+	itTest.getUser(17324).distance(itTest.getUser(0));
+
+}
+
+TEST(RANDOM_1K_TESTS, ITERATE_THROUGH_NETWORK)
 {
 	SocialNetwork itTest;
 	int val;
@@ -378,7 +406,7 @@ TEST(NASH_MAIN)
 		int j = 1;
 		for (auto i = Term4.begin(); i != Term4.end(); i++)
 		{
-			if (j < 10)
+			if (j < 8)
 			{
 				assert((*i).id() == Term4.getUser((*i).id()).id());
 				assert((*i).degree() == Term4.getUser((*i).id()).degree());
@@ -753,4 +781,3 @@ TEST(NASH_MAIN)
 		
 	
 }
-
